@@ -9,7 +9,12 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
+    struct TextFieldPlaceholder {
+        static let top = "TOP"
+        static let bottom = "BOTTOM"
+    }
+    
     // MARK: Outlets
     @IBOutlet weak var memeImageView: UIImageView!
     @IBOutlet weak var cancelButton: UIBarButtonItem!
@@ -22,13 +27,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var shareMemeButton: UIBarButtonItem!
     
     // MARK: Properties
-    fileprivate let memeTextAttributes: [NSAttributedString.Key: Any] = [.strokeColor: UIColor.white,
-                                                             .foregroundColor: UIColor.white,
-                                                             .font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-                                                             .strokeWidth: 4]
+    fileprivate let memeTextAttributes: [NSAttributedString.Key: Any] = [.strokeColor: UIColor.black,
+                                                                         .foregroundColor: UIColor.white,
+                                                                         .font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
+                                                                         .strokeWidth: -4]
     internal var memedImage: UIImage!
-    fileprivate let topTextFieldText = "TOP"
-    fileprivate let bottomTextFieldText = "BOTTOM"
     fileprivate let maximumAllowedFonts = 8
     fileprivate var fonts = [UIFont]()
     
@@ -55,7 +58,7 @@ class ViewController: UIViewController {
         // Unsubscribe keyboard notifications
         unsubscribeFromKeyboardNotification()
     }
-
+    
     // MARK: - Actions
     @IBAction func pickAnImageFromAlbum(_ sender: Any) {
         showImagePicker(for: .photoLibrary)
@@ -82,14 +85,14 @@ class ViewController: UIViewController {
     
     @IBAction func cancelButtonPressed(_ sender: Any) {
         // Reset the view
-        topTextField.text = topTextFieldText
-        bottomTextField.text = bottomTextFieldText
+        topTextField.text = TextFieldPlaceholder.top
+        bottomTextField.text = TextFieldPlaceholder.bottom
         memeImageView.image = nil
     }
     
     @IBAction func shareMemeButtonPressed(_ sender: Any) {
         memedImage = generateMemedImage()
-
+        
         // Create activity to share memed image
         let activityController = UIActivityViewController(activityItems: [memedImage!], applicationActivities: nil)
         present(activityController, animated: true) { [weak self] in
@@ -119,9 +122,9 @@ extension ViewController {
     
     func save() {
         // Create the meme
-        let meme = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, originalImage: memeImageView.image!, memedImage: memedImage)
+        let _ = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, originalImage: memeImageView.image!, memedImage: memedImage)
     }
-        
+    
     func generateMemedImage() -> UIImage {
         
         // Hide toolbar and navbar
@@ -218,7 +221,7 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
             outputImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         }
         memeImageView.image = outputImage
-
+        
         // Enable share meme button
         shareMemeButton.isEnabled = true
         
@@ -230,5 +233,5 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
         // Dismiss image picker
         picker.dismiss(animated: true, completion: nil)
     }
-        
+    
 }
